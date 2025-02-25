@@ -1,0 +1,13 @@
+# Target labels
+ ble_beacon
+# Source files and their labels
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/CMakeFiles/ble_beacon
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/CMakeFiles/ble_beacon.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/CMakeFiles/ble_beacon-complete.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-build.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-configure.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-download.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-install.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-mkdir.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-patch.rule
+C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-update.rule

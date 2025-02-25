@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/CMakeFiles/ble_beacon"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/CMakeFiles/ble_beacon.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/CMakeFiles/ble_beacon-complete.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-build.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-configure.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-download.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-install.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-mkdir.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-patch.rule"
+		},
+		{
+			"file" : "C:/segger/ble_beacon/build/_sysbuild/sysbuild/images/ble_beacon-prefix/src/ble_beacon-stamp/ble_beacon-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"ble_beacon"
+		],
+		"name" : "ble_beacon"
+	}
+}
