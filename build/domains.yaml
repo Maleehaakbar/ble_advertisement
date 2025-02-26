@@ -1,7 +1,0 @@
-default: ble_beacon
-build_dir: C:/segger/ble_beacon/build
-domains:
-  - name: ble_beacon
-    build_dir: C:/segger/ble_beacon/build/ble_beacon
-flash_order:
-  - ble_beacon
