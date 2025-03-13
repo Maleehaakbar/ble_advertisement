@@ -8,6 +8,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/addr.h>
 #include <zephyr/bluetooth/conn.h>
+#include <bluetooth/services/lbs.h>
 
 LOG_MODULE_REGISTER(Lesson3_Exercise1, LOG_LEVEL_INF);
 
@@ -18,6 +19,8 @@ LOG_MODULE_REGISTER(Lesson3_Exercise1, LOG_LEVEL_INF);
 #define RUN_STATUS_LED DK_LED1
 #define RUN_LED_BLINK_INTERVAL 1000
 #define CONNECTION_STATUS_LED   DK_LED2
+
+struct bt_conn *my_conn = NULL;
 
 static const struct bt_le_adv_param *adv_param =
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY,
@@ -41,7 +44,7 @@ void on_connected(struct bt_conn *conn, uint8_t err)
         return;
     }
     LOG_INF("Connected");
-  //  my_conn = bt_conn_ref(conn);
+    my_conn = bt_conn_ref(conn);
     dk_set_led(CONNECTION_STATUS_LED, 1);
 
 }
@@ -49,10 +52,26 @@ void on_connected(struct bt_conn *conn, uint8_t err)
 void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
     LOG_INF("Disconnected. Reason %d", reason);
-   // bt_conn_unref(my_conn);
+    bt_conn_unref(my_conn);
     dk_set_led(CONNECTION_STATUS_LED, 1);
    
 }
+
+static void button_changed(uint32_t button_state, uint32_t has_changed)
+{
+	int err;
+	bool user_button_changed = (has_changed & USER_BUTTON) ? true : false;
+	bool user_button_pressed = (button_state & USER_BUTTON) ? true : false;
+	if (user_button_changed) {
+		LOG_INF("Button %s", (user_button_pressed ? "pressed" : "released"));
+
+		err = bt_lbs_send_button_state(user_button_pressed);
+		if (err) {
+			LOG_ERR("Couldn't send notification. (err: %d)", err);
+		}
+	}
+}
+
 int main(void)
 {
     struct bt_conn_cb connection_callbacks = {
@@ -68,6 +87,11 @@ int main(void)
 		LOG_ERR("LEDs init failed (err %d)\n", err);
 		return -1;
 	}
+
+    err = dk_buttons_init(button_changed);
+    if (err) {
+        LOG_ERR("Cannot init buttons (err: %d)", err);
+    }
     
     err = bt_addr_le_from_str("FF:EE:DD:CC:BB:AA", "random", &addr);
     if (err) {
