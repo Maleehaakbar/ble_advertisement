@@ -1,3 +1,7 @@
 {
-    "nrf-connect.applications": []
+    "nrf-connect.applications": [],
+    "files.associations": {
+        "conn.h": "c",
+        "my_lbs.h": "c"
+    }
 }

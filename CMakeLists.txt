@@ -4,6 +4,7 @@ project(BLE_ADVERTISEMENT)
 
 target_sources(app PRIVATE
   src/main.c
+  src/my_lbs.c
 )
 
 zephyr_library_include_directories(.)
