@@ -1,10 +1,10 @@
 /*header files for enabling stack,populating advertising data and start advertising*/
 
-#include <zephyr/kernel.h>              /*zephyr/incude/zephyr*/
+#include <zephyr/kernel.h>              
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
-#include <dk_buttons_and_leds.h>       /*nrf/include*/
+#include <dk_buttons_and_leds.h>       
 
 LOG_MODULE_REGISTER(Lesson2_Exercise1, LOG_LEVEL_INF);
 
