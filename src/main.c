@@ -99,7 +99,6 @@ static int init_button(void)
 	if (err) {
 		printk("Cannot init buttons (err: %d)\n", err);
 	}
-
 	return err;
 }
 
@@ -121,8 +120,6 @@ int main(void)
         return -1;
     }
     
-    
-
     err=bt_enable(NULL);
     if(err){
         LOG_ERR("Bluetooth init failed (err %d)\n", err);
@@ -147,6 +144,6 @@ int main(void)
 
     for(;;){
         dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
-        k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));  
+        k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));    
     }
 }

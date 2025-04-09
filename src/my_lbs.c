@@ -37,7 +37,7 @@
     const void *buf,
     uint16_t len, uint16_t offset, uint8_t flags)
 {
-    LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle,
+    LOG_INF("Attribute write, handle: %u, conn: %p", attr->handle,
     (void *)conn);
 
     if (len != 1U) {
@@ -75,7 +75,7 @@ return len;
 //get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
     const char *value = attr->user_data;
 
-    LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle,
+    LOG_INF("Attribute read, handle: %u, conn: %p", attr->handle,
     (void *)conn);
 
     if (lbs_cb.button_cb) {
@@ -112,6 +112,7 @@ return len;
     if (callbacks) {
         lbs_cb.led_cb = callbacks->led_cb;
         lbs_cb.button_cb = callbacks->button_cb;
+        LOG_INF("Register application callbacks");
     }
  
     return 0;
