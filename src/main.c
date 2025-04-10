@@ -62,8 +62,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 {   
 	if (has_changed & USER_BUTTON) {
         uint32_t user_button_state = button_state & USER_BUTTON;
-		app_button_state = user_button_state ? true : false;
         my_lbs_send_button_state_indicate(user_button_state);
+		app_button_state = user_button_state ? true : false;
+       
 	}
  
 }
@@ -108,7 +109,6 @@ int main(void)
 {
     int blink_status=0;
     int err;
-    bt_addr_le_t addr;
 
     err = dk_leds_init();
 	if (err) {
