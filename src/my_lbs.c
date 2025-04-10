@@ -21,18 +21,32 @@
  #include <zephyr/bluetooth/conn.h>
  #include <zephyr/bluetooth/uuid.h>
  #include <zephyr/bluetooth/gatt.h>
- 
- #include "my_lbs.h"
- 
  #include <zephyr/logging/log.h>
+ #include "my_lbs.h"
+
  
- LOG_MODULE_DECLARE(Lesson4_Exercise1);
+LOG_MODULE_DECLARE(Lesson4_Exercise2);
  
- static bool button_state;
- static struct my_lbs_cb lbs_cb;
- 
+static bool button_state;
+static struct my_lbs_cb lbs_cb;
+static struct bt_gatt_indicate_params ind_params;
+static bool indicate_enabled;
+
+
+static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
+    uint16_t value)
+{
+    indicate_enabled = (value == BT_GATT_CCC_INDICATE);
+}
+
+// This function is called when a remote device has acknowledged the indication at its host layer
+static void indicate_cb(struct bt_conn *conn, struct bt_gatt_indicate_params *params, uint8_t err)
+{
+	LOG_DBG("Indication %s\n", err != 0U ? "fail" : "success");
+}
+
  /* STEP 6 - Implement the write callback function of the LED characteristic */
- static ssize_t write_led(struct bt_conn *conn,
+static ssize_t write_led(struct bt_conn *conn,
     const struct bt_gatt_attr *attr,
     const void *buf,
     uint16_t len, uint16_t offset, uint8_t flags)
@@ -66,7 +80,7 @@
 return len;
 }
  /* STEP 5 - Implement the read callback function of the Button characteristic */
- static ssize_t read_button(struct bt_conn *conn,
+static ssize_t read_button(struct bt_conn *conn,
     const struct bt_gatt_attr *attr,
     void *buf,
     uint16_t len,
@@ -91,24 +105,43 @@ return len;
  /* LED Button Service Declaration */
  /* Create and add the MY LBS service to the Bluetooth LE stack */
 
-    BT_GATT_SERVICE_DEFINE(my_lbs_svc,
-    BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
-    /*Create and add the Button characteristic */
-    BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
-        BT_GATT_CHRC_READ,
-        BT_GATT_PERM_READ, read_button, NULL,
-        &button_state),
-    /*Create and add the LED characteristic. */
-    BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
-        BT_GATT_CHRC_WRITE,
-        BT_GATT_PERM_WRITE,
-        NULL, write_led, NULL),
+BT_GATT_SERVICE_DEFINE(my_lbs_svc,
+BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
+/*Create and add the Button characteristic */
+BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
+    BT_GATT_CHRC_READ|BT_GATT_CHRC_INDICATE,
+    BT_GATT_PERM_READ, read_button, NULL,
+    &button_state),
+BT_GATT_CCC(mylbsbc_ccc_cfg_changed,
+	BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+/*Create and add the LED characteristic. */
+BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
+    BT_GATT_CHRC_WRITE,
+    BT_GATT_PERM_WRITE,
+    NULL, write_led, NULL),
     
     );
  
+
  /* A function to register application callbacks for the LED and Button characteristics  */
- int my_lbs_init(struct my_lbs_cb *callbacks)
- {
+
+int my_lbs_send_button_state_indicate(bool button_state)
+{
+    if (!indicate_enabled) {
+        return -EACCES;
+    }
+ 
+     /* STEP 5.2 - Populate the indication */
+    ind_params.attr = &my_lbs_svc.attrs[2];
+    ind_params.func = indicate_cb;
+    ind_params.destroy = NULL;
+    ind_params.data = &button_state;
+    ind_params.len = sizeof(button_state);
+    return bt_gatt_indicate(NULL, &ind_params);
+}
+
+int my_lbs_init(struct my_lbs_cb *callbacks)
+{
     if (callbacks) {
         lbs_cb.led_cb = callbacks->led_cb;
         lbs_cb.button_cb = callbacks->button_cb;
@@ -116,4 +149,4 @@ return len;
     }
  
     return 0;
- }
+}

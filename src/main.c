@@ -12,7 +12,7 @@
 #include "my_lbs.h"
 
 
-LOG_MODULE_REGISTER(Lesson4_Exercise1, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 
 #define COMPANY_ID_CODE            0x0059
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
@@ -59,11 +59,13 @@ static struct my_lbs_cb app_callbacks = {
 };
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
-{
+{   
 	if (has_changed & USER_BUTTON) {
-		uint32_t user_button_state = button_state & USER_BUTTON;
+        uint32_t user_button_state = button_state & USER_BUTTON;
 		app_button_state = user_button_state ? true : false;
+        my_lbs_send_button_state_indicate(user_button_state);
 	}
+ 
 }
 
 void on_connected(struct bt_conn *conn, uint8_t err)
