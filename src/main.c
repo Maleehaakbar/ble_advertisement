@@ -11,7 +11,6 @@
 #include <zephyr/bluetooth/gatt.h>
 #include "my_lbs.h"
 
-
 LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 
 #define COMPANY_ID_CODE            0x0059
@@ -23,9 +22,13 @@ LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 #define CONNECTION_STATUS_LED   DK_LED2
 #define USER_LED                DK_LED3
 #define USER_BUTTON             DK_BTN1_MSK
+#define NOTIFY_INTERVAL         500
+#define STACKSIZE 1024
+#define PRIORITY 7
 
 struct bt_conn *my_conn = NULL;
 static bool app_button_state;
+static uint32_t app_sensor_value = 100;
 
 static const struct bt_le_adv_param *adv_param =
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY,
@@ -105,6 +108,27 @@ static int init_button(void)
 	return err;
 }
 
+static void simulate_data(void)
+{
+	app_sensor_value++;
+	if (app_sensor_value == 200) {
+		app_sensor_value = 100;
+	}
+}
+
+void send_data_thread(void)
+{
+	while(1){
+		/* Simulate data */
+		simulate_data();
+		/* Send notification, the function sends notifications only if a client is subscribed */
+		my_lbs_send_sensor_notify(app_sensor_value);
+
+		k_sleep(K_MSEC(NOTIFY_INTERVAL));
+	}
+		
+}
+
 int main(void)
 {
     int blink_status=0;
@@ -149,3 +173,6 @@ int main(void)
         k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));    
     }
 }
+
+K_THREAD_DEFINE(send_data_thread_id, STACKSIZE, send_data_thread, NULL, NULL,
+    NULL, PRIORITY, 0, 0);

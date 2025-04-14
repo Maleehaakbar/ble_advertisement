@@ -31,6 +31,7 @@ static bool button_state;
 static struct my_lbs_cb lbs_cb;
 static struct bt_gatt_indicate_params ind_params;
 static bool indicate_enabled;
+static bool notify_mysensor_enabled;
 
 
 static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
@@ -43,6 +44,12 @@ static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 static void indicate_cb(struct bt_conn *conn, struct bt_gatt_indicate_params *params, uint8_t err)
 {
 	LOG_DBG("Indication %s\n", err != 0U ? "fail" : "success");
+}
+
+static void mylbsbc_ccc_mysensor_cfg_changed(const struct bt_gatt_attr *attr,
+    uint16_t value)
+{
+    notify_mysensor_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
  /* STEP 6 - Implement the write callback function of the LED characteristic */
@@ -119,6 +126,12 @@ BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
     BT_GATT_CHRC_WRITE,
     BT_GATT_PERM_WRITE,
     NULL, write_led, NULL),
+	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_MYSENSOR,
+        BT_GATT_CHRC_NOTIFY,
+        BT_GATT_PERM_NONE, NULL, NULL,
+        NULL),
+BT_GATT_CCC(mylbsbc_ccc_mysensor_cfg_changed,
+BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
     
     );
  
@@ -139,6 +152,18 @@ int my_lbs_send_button_state_indicate(bool button_state)
     ind_params.len = sizeof(button_state);
     return bt_gatt_indicate(NULL, &ind_params);
 }
+
+int my_lbs_send_sensor_notify(uint32_t sensor_value)
+{
+	if (!notify_mysensor_enabled) {
+		return -EACCES;
+	}
+
+	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[7], 
+			      &sensor_value,
+			      sizeof(sensor_value));
+}
+
 
 int my_lbs_init(struct my_lbs_cb *callbacks)
 {
